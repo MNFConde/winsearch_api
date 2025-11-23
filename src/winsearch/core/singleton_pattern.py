@@ -12,6 +12,11 @@ class singleton:
 
     def __instancecheck__(self, instance):
         return isinstance(instance, self._cls)
+    
+    def clear(self) -> None:
+        if not hasattr(self, "_instance"):
+            return 
+        del self._instance
 
 
 class singleton_args:
@@ -34,36 +39,8 @@ class singleton_args:
             self._instances[key] = self._cls(*args, **kwargs)
         return self._instances[key]
 
-    def __instancecheck__(self, instance):
+    def __instancecheck__(self, instance: Any) -> bool:
         return isinstance(instance, self._cls)
-
-
-if __name__ == "__main__":
-
-    @singleton
-    class A:
-        def __init__(self, a):
-            self.a = a
-
-    a1 = A(1)
-    a2 = A(2)
-    a3 = A(1)
-    print(a1.a, a2.a, a3.a)
-    print(a1 is a2, a1 is a3)
-
-    @singleton_args
-    class B:
-        def __init__(self, x, y=0):
-            self.x = x
-            self.y = y
-
-    a1 = B(1)  # 创建新实例
-    a2 = B(1)  # 返回相同实例
-    a3 = B(2)  # 创建新实例
-    a4 = B(1, y=0)  # 返回与a1相同的实例
-    a5 = B(1, y=1)  # 创建新实例
-
-    print(a1 is a2)  # True
-    print(a1 is a3)  # False
-    print(a1 is a4)  # True
-    print(a1 is a5)  # False
+    
+    def clear(self) -> None:
+        self._instances.clear()

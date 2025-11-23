@@ -1,5 +1,5 @@
 from typing import Any, Callable
-from singleton_pattern import singleton_args
+from .singleton_pattern import singleton_args
 from ..utils.version import Version
 
 
@@ -18,29 +18,12 @@ class Registry:
 
         return decorator
 
+    def __getitem__(self, name: str) -> Callable[..., Any]:
+        return self.__registry[name]
+
+    def __setitem__(self, name: str, value: Callable[..., Any]) -> None:
+        self.__registry[name] = value
+
     @property
     def registry(self) -> dict[str, Callable[..., Any]]:
         return self.__registry
-
-
-if __name__ == "__main__":
-    registry = Registry()
-
-    @registry("func1")
-    def test():
-        return 1
-
-    r2 = Registry()
-
-    @r2("func2")
-    def test2():
-        return 2
-
-    r3 = Registry()
-
-    print(r3.registry["func1"]())
-    print(r3.registry["func2"]())
-    print("func1" in r3.registry.keys())
-
-    r4 = Registry("1")
-    print("func1" in r4.registry.keys())

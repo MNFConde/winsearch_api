@@ -11,3 +11,11 @@ wheels/
 
 # VSCode
 *TODO*
+.vscode
+
+# pytest
+*pytest*
+*coverage*
+
+# cache
+*cache*

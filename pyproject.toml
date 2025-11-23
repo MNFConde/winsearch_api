@@ -9,3 +9,16 @@ dependencies = [
     "pytest-cov>=7.0.0",
     "pytest-xdist>=3.8.0",
 ]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+
+[tool.coverage.run]
+source = ["src"]          # 只统计源码
+omit = ["*/tests/*", "*/test_*"]    # 排除测试文件
+include = ["src/*"]
+
+[tool.coverage.report]
+precision = 1                       # 保留 1 位小数
+show_missing = true                 # 终端显示未覆盖行号
+fail_under = 90                     # 全局卡点
