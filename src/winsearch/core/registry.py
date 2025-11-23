@@ -1,13 +1,14 @@
 from functools import wraps # wraps 将被装饰器修饰的函数签名复制给装饰器返回的函数
 from typing import Any, Callable
 from singleton_pattern import singleton_args
+from ..utils.version import Version
 
 @singleton_args
 class Registry:
     def __init__(self, name: str = ''):
         self.__registry: dict[str, Callable[..., Any]] = dict()
         self._name = name
-        self.verion = ""
+        self.verion = Version()
     
     def __call__(self, name: str) -> Callable:
         def decorator(fn: Callable[..., Any]) -> Callable[..., Any]:
