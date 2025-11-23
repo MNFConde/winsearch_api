@@ -7,6 +7,7 @@ class Registry:
     def __init__(self, name: str = ''):
         self.__registry: dict[str, Callable[..., Any]] = dict()
         self._name = name
+        self.verion = ""
     
     def __call__(self, name: str) -> Callable:
         def decorator(fn: Callable[..., Any]) -> Callable[..., Any]:
