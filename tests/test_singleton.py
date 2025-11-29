@@ -15,6 +15,21 @@ def test_singleton():
     assert a3.a == 1
     assert a1 is a2
     assert a1 is a3
+    
+    # __isinstancecheck__
+    
+    assert isinstance(a1, A) # type: ignore 
+    assert isinstance(a2, A) # type: ignore 
+    assert isinstance(a3, A) # type: ignore 
+    
+    # clear
+    A.clear()
+    
+    assert not hasattr(a1, '_instance')
+    assert not hasattr(a2, '_instance')
+    assert not hasattr(a3, '_instance')
+    
+    A.clear()
 
 def test_singleton_args():
     @singleton_args
@@ -45,3 +60,16 @@ def test_singleton_args():
     assert a1 is not a3
     assert a1 is a4
     assert a1 is not a5
+    
+    # __isinstancecheck__
+    
+    assert isinstance(a1, B) # type: ignore 
+    assert isinstance(a2, B) # type: ignore 
+    assert isinstance(a3, B) # type: ignore 
+    
+    # clear
+    B.clear()
+    
+    assert not hasattr(a1, '_instance')
+    assert not hasattr(a2, '_instance')
+    assert not hasattr(a3, '_instance')
