@@ -1,16 +1,18 @@
-from typing import Any
+from typing import Any, Type, TypeVar, Generic
+
+T = TypeVar('T')
 
 
-class singleton:
-    def __init__(self, cls):
+class singleton(Generic[T]):
+    def __init__(self, cls: Type[T]):
         self._cls = cls
 
-    def __call__(self, *args, **kwargs):
+    def __call__(self, *args: Any, **kwargs: Any) -> T:
         if not hasattr(self, "_instance"):
             self._instance = self._cls(*args, **kwargs)
         return self._instance
 
-    def __instancecheck__(self, instance):
+    def __instancecheck__(self, instance: Any) -> bool:
         return isinstance(instance, self._cls)
     
     def clear(self) -> None:
@@ -19,12 +21,12 @@ class singleton:
         del self._instance
 
 
-class singleton_args:
-    def __init__(self, cls):
+class singleton_args(Generic[T]):
+    def __init__(self, cls: Type[T]):
         self._cls = cls
         self._instances: dict[tuple, Any] = {}
 
-    def __call__(self, *args, **kwargs):
+    def __call__(self, *args, **kwargs) -> T:
         # 获取函数的参数默认值，不然无法提取默认值的情况
         import inspect
 

@@ -52,14 +52,3 @@ class Version:
         if len(self._ver) != self._split_num or self.version_str == "":
             return False
         return True
-
-
-if __name__ == "__main__":
-    a = Version()
-    print(a.is_valid())
-    a.version = "1.2.3"
-    print(a.is_valid())
-    print(a)
-    print(a.version)
-    a.version = "1.2.34"
-    print(a.version)
