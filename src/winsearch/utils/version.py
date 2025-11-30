@@ -7,16 +7,21 @@ def default_zero(index: int):
 
 class Version:
     def __init__(
-        self, len: int = 3, fill_func: Callable = default_zero, split_alpha: str = "."
+        self,
+        len: int = 3,
+        fill_func: Callable = default_zero,
+        split_alpha: str = ".",
+        main_split_num: int = 2,
     ) -> None:
         self._split_num = len
         self._fill_func = fill_func
         self._split_alpha = split_alpha
         self._ver = [self._fill_func(index) for index in range(self._split_num)]
         self.version_str = ""
+        self.main_split_num = main_split_num
 
     def __str__(self) -> str:
-        return self.version
+        return '.'.join(self._ver[: self.main_split_num])
 
     @property
     def version(self) -> str:
@@ -51,4 +56,10 @@ class Version:
     def is_valid(self) -> bool:
         if len(self._ver) != self._split_num or self.version_str == "":
             return False
+        return True
+
+    def match(self, other_version: "Version") -> bool:
+        for index in range(self.main_split_num):
+            if self._ver[index] != other_version._ver[index]:
+                return False
         return True
