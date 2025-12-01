@@ -21,9 +21,25 @@ def test_version():
     a.version = '1.2.3'
     
     assert a.version == '1.2.3'
-    assert str(a) == '1.2.3'
+    assert str(a) == '1.2'
     
     a.version = ''
     
     assert a.version == '1.2.3'
-    assert str(a) == '1.2.3'
+    assert str(a) == '1.2'
+
+def test_version_match():
+    a: Version = Version()
+    b: Version = Version()
+    c: Version = Version()
+    
+    a.version = '1.2.1'
+    b.version = '1.2.0'
+    c.version = '1.3.4'
+    
+    assert a.match(b)
+    assert b.match(a)
+    assert not c.match(a)
+    assert not c.match(b)
+    assert not a.match(c)
+    assert not b.match(c)

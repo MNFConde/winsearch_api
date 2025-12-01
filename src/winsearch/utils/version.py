@@ -21,7 +21,7 @@ class Version:
         self.main_split_num = main_split_num
 
     def __str__(self) -> str:
-        return '.'.join(self._ver[: self.main_split_num])
+        return '.'.join((str(i) for i in self._ver[: self.main_split_num]))
 
     @property
     def version(self) -> str:
