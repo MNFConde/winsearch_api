@@ -2,7 +2,7 @@ import os
 import zipfile
 import requests
 from pathlib import Path
-from typing import Callable, Any
+from typing import Callable
 
 
 class DownloadError(Exception):
@@ -46,3 +46,14 @@ def unzip_dll(
             z.extract(file, dir_path)
 
     os.remove(zip_path)
+
+def file_rename(file_path: Path, new_name: str) -> None:
+    if not file_path.exists():
+        return
+    
+    new_file_path: Path = file_path.parent / new_name
+    
+    if new_file_path.exists():
+        raise NameError('指定路径下存在与目标文件名同名的文件')
+    
+    file_path.rename(new_file_path)
