@@ -9,6 +9,9 @@ class DownloadError(Exception):
     pass
 
 
+def default_name_filter(file_name: str) -> bool:
+    return True
+
 def download_dll(dir_path: Path, file_url: str, file_name: str) -> None:
     os.makedirs(dir_path, exist_ok=True)
     file_path: Path = dir_path / file_name
@@ -27,14 +30,19 @@ def download_dll(dir_path: Path, file_url: str, file_name: str) -> None:
         raise DownloadError(f"下载SDK失败: {str(e)}")
 
 
-def unzip_dll(zip_path: Path, dir_path: Path, name_fn: Callable[[str], str]):
+def unzip_dll(
+    zip_path: Path,
+    dir_path: Path,
+    name_filter: Callable[[str], bool] = default_name_filter,
+):
     with zipfile.ZipFile(zip_path, "r") as z:
-        for file in z.namelist():
-            if not file.endswith(".dll"):
+        for file in z.infolist():
+            if not name_filter(file.filename):
                 continue
             
-            dll_path = dir_path / name_fn(file)
-            
-            z.extract(file, dll_path)
+            file_dir = dir_path / Path(file.filename).parent
+            file_dir.mkdir(parents=True, exist_ok=True)
+
+            z.extract(file, dir_path)
 
     os.remove(zip_path)
