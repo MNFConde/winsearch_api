@@ -49,7 +49,7 @@ def unzip_dll(
 
 def file_rename(file_path: Path, new_name: str) -> None:
     if not file_path.exists():
-        return
+        raise NameError('指定文件不存在')
     
     new_file_path: Path = file_path.parent / new_name
     
