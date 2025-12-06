@@ -2,12 +2,15 @@ import os
 import zipfile
 import requests
 from pathlib import Path
-from typing import Callable, Any
+from typing import Callable
 
 
 class DownloadError(Exception):
     pass
 
+
+def default_name_filter(file_name: str) -> bool:
+    return True
 
 def download_dll(dir_path: Path, file_url: str, file_name: str) -> None:
     os.makedirs(dir_path, exist_ok=True)
@@ -27,14 +30,30 @@ def download_dll(dir_path: Path, file_url: str, file_name: str) -> None:
         raise DownloadError(f"下载SDK失败: {str(e)}")
 
 
-def unzip_dll(zip_path: Path, dir_path: Path, name_fn: Callable[[str], str]):
+def unzip_dll(
+    zip_path: Path,
+    dir_path: Path,
+    name_filter: Callable[[str], bool] = default_name_filter,
+):
     with zipfile.ZipFile(zip_path, "r") as z:
-        for file in z.namelist():
-            if not file.endswith(".dll"):
+        for file in z.infolist():
+            if not name_filter(file.filename):
                 continue
             
-            dll_path = dir_path / name_fn(file)
-            
-            z.extract(file, dll_path)
+            file_dir = dir_path / Path(file.filename).parent
+            file_dir.mkdir(parents=True, exist_ok=True)
+
+            z.extract(file, dir_path)
 
     os.remove(zip_path)
+
+def file_rename(file_path: Path, new_name: str) -> None:
+    if not file_path.exists():
+        raise NameError('指定文件不存在')
+    
+    new_file_path: Path = file_path.parent / new_name
+    
+    if new_file_path.exists():
+        raise NameError('指定路径下存在与目标文件名同名的文件')
+    
+    file_path.rename(new_file_path)
