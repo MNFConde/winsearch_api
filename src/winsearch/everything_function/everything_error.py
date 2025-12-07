@@ -75,7 +75,7 @@ ERROR_CODE_TO_EXCEPTION = {
 }
 
 
-def raise_for_error_code(error_code):
+def raise_for_error_code(error_code) -> None:
     """根据错误代码抛出相应的异常
 
     Args:
