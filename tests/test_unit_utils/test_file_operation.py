@@ -1,4 +1,4 @@
-from test_file.test_file import everything_path, test_file_dir
+from tests.test_dependence.test_file import everything_path, test_file_dir
 from winsearch.everything_function.everything_dll import sdk_url
 from winsearch.utils.file_operation import download_dll, unzip_dll, DownloadError, file_rename
 from pathlib import Path
