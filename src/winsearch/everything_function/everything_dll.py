@@ -1,4 +1,4 @@
-from ..utils.file_operation import download_dll, unzip_dll
+from ..utils.file_operation import download_dll, unzip_dll, file_rename
 from ..utils.version import Version
 from ..core.singleton_pattern import singleton
 from ..utils.mini_fn import get_arch
@@ -25,28 +25,34 @@ def make_get_name(version: Version) -> Callable[..., Any]:
     
     return get_dll_name
 
+def dll_filter(file_name: str) -> bool:
+    return file_name.endswith('.dll')
+
 class DllError(Exception):
     pass
 
 @singleton
 class EverythingDll:
-    def __init__(self, version: Version) -> None:
+    def __init__(self, version: Version, dir_path: Path = Path.cwd() / 'dll') -> None:
         self.ver = version
-        self.dll = self._load_dll()
         self.arch = get_arch()
         self.name_fn = make_get_name(self.ver)
+        self.dir_path = dir_path
+        self.dll = self._load_dll()
     
     def __getitem__(self, fn_name: str) -> Any:
         return getattr(self.dll, fn_name)
     
+    def __getattr__(self, fn_name: str) -> Any:
+        return getattr(self.dll, fn_name)
+    
     def _load_dll(self) -> WinDLL:
         dll_name: str = self.name_fn(str(self.arch))
-        dir_path: Path = Path.cwd() / 'dll'
-        dll_path: Path = dir_path / dll_name
+        dll_path: Path = self.dir_path / dll_name
         
         if not dll_path.exists():
             download_dll(
-                dir_path,
+                self.dir_path,
                 sdk_url[str(self.ver)],
                 'Everything_SDK_Zip.zip',
             )
@@ -54,8 +60,12 @@ class EverythingDll:
             unzip_dll(
                 sdk_zip_path,
                 sdk_dir,
-                self.name_fn
+                dll_filter,
             )
+            
+            for file in self.dir_path.rglob('*.dll'):
+                if file.is_file():
+                    file_rename(file, self.name_fn(file.name))
         
         try:
             return WinDLL(str(dll_path))
