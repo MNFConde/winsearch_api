@@ -1,4 +1,4 @@
-from ..core.function_interface import interface
+from winsearch.core.function_interface import interface
 
 @interface
 def get_result_date_created():
