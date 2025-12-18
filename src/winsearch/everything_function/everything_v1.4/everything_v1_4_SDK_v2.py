@@ -1,5 +1,5 @@
-from ...core.registry import Registry
-from ..everything_base_interface import (
+from winsearch.core.registry import Registry
+from winsearch.everything_function.everything_base_interface import (
     get_result_date_created,
     get_result_date_modified,
     get_result_date_accessed,
@@ -24,13 +24,28 @@ from ..everything_base_interface import (
     get_reply_window,
     get_reply_id,
 )
+from winsearch.everything_function.everything_dll import EverythingDll
+from pathlib import Path
+import ctypes
+from typing import Optional
 
 registry_name: str = 'everything_v1.4'
 
 everything = Registry(registry_name)
 everything.verion.version = "1.4"
+everything_dll_dir_path = Path(__file__).parent.parent / 'dll'
+everything_dll = EverythingDll(everything.verion, everything_dll_dir_path)
 
 @everything('get_result_date_created')
 @get_result_date_created.impl
-def func():
-    return 1
+def func(index: int) -> Optional[int]:
+    """获取结果创建时间（Windows FILETIME格式）"""
+    everything_dll.Everything_GetResultDateCreated.argtypes = [
+        ctypes.c_int,
+        ctypes.POINTER(ctypes.c_ulonglong),
+    ]
+    everything_dll.Everything_GetResultDateCreated.restype = []
+    
+    filetime = ctypes.c_ulonglong()
+    everything_dll.Everything_GetResultDateCreated(index, ctypes.byref(filetime))
+    return filetime.value if filetime.value != 0 else None
