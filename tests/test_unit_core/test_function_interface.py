@@ -23,3 +23,26 @@ def test_impl():
     assert func1._impl is not None
     assert func1(1) == 2
     
+    @func1.impl
+    def f3(a: int, b: int) -> int:
+        return a + b
+    
+    assert func1(1, 2) == 3
+    
+def test_init():
+    @interface
+    def func1():
+        ...
+    
+    @func1.init
+    def init_fn1():
+        return 1
+    
+    assert func1.init_res == 1
+    
+    @func1.impl
+    def fn1():
+        return 1
+    
+    assert func1() == 1
+    
