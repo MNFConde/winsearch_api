@@ -60,9 +60,9 @@ class TestClass:
 
 def test_everything_dll(mocker):
     # 这里 mock 需要 mock 使用的地方
-    mock_download = mocker.patch('winsearch.everything_function.everything_dll.download_dll', return_value=None)
-    mock_unzip = mocker.patch('winsearch.everything_function.everything_dll.unzip_dll', return_value=None)
-    mock_windll = mocker.patch('winsearch.everything_function.everything_dll.WinDLL', return_value=TestClass())
+    mocker.patch('winsearch.everything_function.everything_dll.download_dll', return_value=None)
+    mocker.patch('winsearch.everything_function.everything_dll.unzip_dll', return_value=None)
+    mocker.patch('winsearch.everything_function.everything_dll.WinDLL', return_value=TestClass())
     
     
     assert (dir_path / '32.dll').exists()
@@ -85,8 +85,8 @@ def test_everything_dll(mocker):
     file_rename(dll_64, '64.dll')
 
 def test_except(mocker):
-    mock_download = mocker.patch('winsearch.everything_function.everything_dll.download_dll', return_value=None)
-    mock_unzip = mocker.patch('winsearch.everything_function.everything_dll.unzip_dll', return_value=None)
+    mocker.patch('winsearch.everything_function.everything_dll.download_dll', return_value=None)
+    mocker.patch('winsearch.everything_function.everything_dll.unzip_dll', return_value=None)
     mock_windll = mocker.patch('winsearch.everything_function.everything_dll.WinDLL')
     mock_windll.side_effect = Exception('123')
     dir_path = test_file_dir / 'test_everything'
@@ -94,7 +94,7 @@ def test_except(mocker):
     a = Version()
     a.version = '1.4.3'
     with pytest.raises(DllError, match=f"无法加载 dll: {'123'}"):
-        dll = EverythingDll(a, dir_path)
+        EverythingDll(a, dir_path)
 
 
 @pytest.mark.parametrize('res', [
@@ -107,9 +107,9 @@ def test_except(mocker):
     7,
 ])
 def test_mini_fn_method(mocker, res: int):
-    mock_download = mocker.patch('winsearch.everything_function.everything_dll.download_dll', return_value=None)
-    mock_unzip = mocker.patch('winsearch.everything_function.everything_dll.unzip_dll', return_value=None)
-    mock_windll = mocker.patch('winsearch.everything_function.everything_dll.WinDLL', return_value=TestClass(res))
+    mocker.patch('winsearch.everything_function.everything_dll.download_dll', return_value=None)
+    mocker.patch('winsearch.everything_function.everything_dll.unzip_dll', return_value=None)
+    mocker.patch('winsearch.everything_function.everything_dll.WinDLL', return_value=TestClass(res))
     dir_path = test_file_dir / 'test_everything'
     
     a = Version()

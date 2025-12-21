@@ -29,7 +29,7 @@ def make_test_zip(file_list: Iterable[Path]):
 
 
 def test_download_unzip_base():
-    dir_path: Path = everything_path
+    dir_path: Path = test_file_dir / 'dll'
     file_url = list(sdk_url.values())[0]
     file_name = 'test.zip'
     file_path = dir_path / file_name
@@ -56,7 +56,7 @@ def test_download_unzip_base():
     remove_dir_with_file(dir_path)
 
 
-def test_download_dll(mocker):
+def test_download_dll_error(mocker):
     mock_get = mocker.patch('requests.get')
     mock_get.side_effect = RequestException('123')
 
