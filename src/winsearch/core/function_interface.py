@@ -1,8 +1,9 @@
-from typing import Any, Callable, TypeVar, Generic
+from typing import Any, Callable, TypeVar, Generic, ParamSpec, cast
 
+P = ParamSpec('P')
 T = TypeVar('T')
 
-class interface(Generic[T]):
+class interface(Generic[P, T]):
     '''
     用来创建一个函数的接口
     
@@ -27,20 +28,22 @@ class interface(Generic[T]):
     并且将只执行一次的初始化部分和可能会被反复调用的函数逻辑部分分开
     
     '''
-    def __init__(self, func: Callable[..., Any]) -> None:
-        self._impl = None
+    def __init__(self, func: Callable[P, Any]) -> None:
+        ...
     
-    def __call__(self, *args: Any, **kwargs: Any) -> Any:
-        if self._impl is None:
+    def __call__(self, *args: P.args, **kwargs: P.kwargs) -> T:
+        if not hasattr(self, '_impl'):
             raise NotImplementedError("Interface method not implemented")
         return self._impl(*args, **kwargs)
     
-    def impl(self, func: Callable[..., T]) -> Callable[..., T]:
+    def impl(self, func: Callable[P, T]) -> T:
         '''
         用来保存传入的函数，并且作为是否实现了该函数接口的依据，返回自身
         '''
-        self._impl = func
-        return self
+        self._impl: Callable[P, T] = func
+        # 这里使用 cast 告诉类型检查器将 self 视为 T
+        # 既满足 链式调用/装饰器调用 ，又能保持使用时获取正确的返回值提示
+        return cast(T, self) 
     
     def init(self, func: Callable[..., Any], *args, **kwargs) -> None:
         '''
