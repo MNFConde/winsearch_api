@@ -9,9 +9,17 @@ class TransTypeError(Exception): ...
 
 class WinDWORD:
     def __init__(self, input_num: int) -> None:
+        self.dword = DWORD()
+        self.value = input_num
+    
+    @property
+    def value(self) -> int:
+        return self.dword.value
+    
+    @value.setter
+    def value(self, input_num: int) -> None:
         if input_num > (pow(2, 32) - 1) or input_num < 0:
             raise ValueError(f"给定数字: {input_num} 不在 [0, {pow(2, 32) - 1}] 中")
-        self.dword = DWORD()
         self.dword.value = input_num
 
 
